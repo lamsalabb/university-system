@@ -30,11 +30,30 @@ public class CourseController {
                 Map.of("message", "Course successfully created!"),
                 HttpStatus.CREATED
 
+
+
+                //WRITE PROPER CRUD OPERATIONS FOR ALL RELEVANT SERVICES AND CONTROLLERS
+
         );
     }
 
+    @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteCourse(@PathVariable int id){
-        courseService.deleteCourse(courseService.findCourseById(id));
+        try {
+            courseService.deleteCourse(id);
+
+            return new ResponseEntity<>(
+                    Map.of("message","Course Deleted Successfully."),
+                    HttpStatus.OK
+            );
+        }
+
+        catch (RuntimeException e){
+            return new ResponseEntity<>(
+                    Map.of("message",e.getMessage()),
+                    HttpStatus.NOT_FOUND
+            );
+        }
     }
 
 

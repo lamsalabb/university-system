@@ -33,7 +33,7 @@ public class RegistrationController {
             }
             catch (IllegalArgumentException e){
                 return new ResponseEntity<>(
-                        Map.of("message", "Registration failed: Email address already in use."),
+                        Map.of("message", e.getMessage()),
                         HttpStatus.CONFLICT
                 );
             }

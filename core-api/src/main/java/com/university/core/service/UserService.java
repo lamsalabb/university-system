@@ -7,7 +7,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class UserService {
@@ -20,12 +19,15 @@ public class UserService {
         this.passwordEncoder = passwordEncoder;
     }
 
-    @Transactional
+
+
+    @Transactional//CREATE
     public User registerNewUser(User registrationUser){
 
         if (userRepository.findByEmail(registrationUser.getEmail()).isPresent()) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("Registration failed: Email address already in use.");
         }
+
         String hashedPassword = passwordEncoder.encode(registrationUser.getPasswordHash());
 
         User user = User.builder()
@@ -40,23 +42,64 @@ public class UserService {
         return userRepository.save(user);
     }
 
-    public Boolean userExists(String email){
-        return userRepository.findByEmail(email).isPresent();
+
+    //READ
+    public List<User> findAllUsers(){
+        return userRepository.findAll();
     }
 
     public User findUserById(int id){
-        return userRepository.findById(id);
+        return userRepository.findById(id).orElseThrow(
+                () -> new RuntimeException("User not found with id: " + id)
+        );
     }
 
-    public Optional<User> findUserByEmail(String email){
-        return userRepository.findByEmail(email);
-    }
-
-    public void deleteUser(User user){
-        userRepository.delete(user);
+    public User findUserByEmail(String email){
+        return userRepository.findByEmail(email).orElseThrow(
+                () -> new RuntimeException("Email doesn't exist.")
+        );
     }
 
     public List<User> findAllByRole(User.Role role){
         return userRepository.findByRole(role);
     }
+
+
+
+    @Transactional//UPDATE
+    public User updateUser(int id, User updatedUserDetails){
+
+        User existingUser = findUserById(id);
+
+        existingUser.setFirstName(updatedUserDetails.getFirstName());
+        existingUser.setLastName(updatedUserDetails.getLastName());
+
+        if (!existingUser.getEmail().equals(updatedUserDetails.getEmail())){
+            userRepository.findByEmail(updatedUserDetails.getEmail()).ifPresent(
+                    (userWithSameEmail) -> {
+                        throw new RuntimeException("Email already exists. Please enter unique email.");
+                    }
+            );//check for unique email before updating
+            existingUser.setEmail(updatedUserDetails.getEmail());
+
+        }
+
+
+        existingUser.setPasswordHash(passwordEncoder.encode(updatedUserDetails.getPasswordHash()));//separate password change logic later
+
+        return userRepository.save(existingUser);
+    }
+
+
+
+
+    @Transactional//DELETE
+    public void deleteUser(int id){
+        if(!userRepository.existsById(id)){
+            throw new RuntimeException("Cannot delete. User not found with id: " + id);
+        }
+        userRepository.deleteById(id);
+    }
+
+
 }
