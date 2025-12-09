@@ -26,6 +26,12 @@ public class GlobalExceptionHandler {
         return buildErrorResponse(HttpStatus.NOT_FOUND, e.getMessage());
     }
 
+    @ExceptionHandler(EnrollmentNotFoundException.class)
+    public ResponseEntity<?> handleEnrollmentNotFound(EnrollmentNotFoundException e){
+        return buildErrorResponse(HttpStatus.NOT_FOUND, e.getMessage());
+    }
+
+
     @ExceptionHandler(EmailAlreadyExistsException.class)
     public ResponseEntity<?> handleEmailAlreadyExists(EmailAlreadyExistsException e){
         return buildErrorResponse(HttpStatus.CONFLICT, e.getMessage());
@@ -41,10 +47,24 @@ public class GlobalExceptionHandler {
         return buildErrorResponse(HttpStatus.CONFLICT, e.getMessage());
     }
 
+    @ExceptionHandler(EnrollmentAlreadyExistsException.class)
+    public ResponseEntity<?> handleEnrollmentAlreadyExists(EnrollmentAlreadyExistsException e){
+        return buildErrorResponse(HttpStatus.CONFLICT, e.getMessage());
+    }
+
+    @ExceptionHandler(NonStudentEnrollmentException.class)
+    public ResponseEntity<?> handleNonStudentEnrollment(NonStudentEnrollmentException e){
+        return buildErrorResponse(HttpStatus.UNPROCESSABLE_CONTENT, e.getMessage());
+    }
+
     @ExceptionHandler(Exception.class)//fallback for any generic exceptions
     public ResponseEntity<?> handleGenericException(Exception e){
         return buildErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR, "Unexpected error occurred.");
     }
+
+
+
+
 
     //helper class to build a response
     private ResponseEntity<?> buildErrorResponse(HttpStatus status, String message) {

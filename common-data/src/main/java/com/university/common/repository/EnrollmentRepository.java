@@ -10,9 +10,9 @@ import java.util.Optional;
 
 public interface EnrollmentRepository extends JpaRepository<Enrollment,Integer> {
 
-    List<Enrollment> findByStudent(User student);
+    List<Enrollment> findByStudentId(int studentId);
 
-    List<Enrollment> findByCourse(Course course);
+    List<Enrollment> findByCourseId(int courseId);
 
     Optional<Enrollment> findByStudentAndCourseAndSemester(User student, Course course, String semester);//using the unique constraint search
 }

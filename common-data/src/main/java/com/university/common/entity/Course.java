@@ -18,7 +18,7 @@ public class Course {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    private Integer id;
 
     @Column(name = "code", nullable = false, unique = true)
     private String code;
@@ -27,7 +27,7 @@ public class Course {
     private String title;
 
     @Column(name = "credits",nullable = false)
-    private int credits;
+    private Integer credits;
 
     @ManyToOne(fetch = FetchType.LAZY)//many courses can have one instructor
     @JoinColumn(name = "instructor_id", referencedColumnName = "id")

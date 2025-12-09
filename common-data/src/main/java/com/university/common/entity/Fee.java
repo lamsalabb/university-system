@@ -18,14 +18,14 @@ public class Fee {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    private Integer id;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "student_id", nullable = false)
     private User student;
 
     @Column(name = "amount", nullable = false)
-    private int amount;
+    private Integer amount;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "type", nullable = false)

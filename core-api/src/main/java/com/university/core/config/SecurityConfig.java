@@ -4,6 +4,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.annotation.web.configurers.LogoutConfigurer;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.NoOpPasswordEncoder;
@@ -28,27 +29,11 @@ public class SecurityConfig {
                 .authorizeHttpRequests(
                         configurer -> configurer
 
-                                //registration
-                                .requestMatchers("/showRegisterPage", "/save").permitAll()
-                                .requestMatchers("/css/**", "/images/**").permitAll()
-                                .requestMatchers("/api/admin/**").hasRole("ADMIN")
-                                .requestMatchers("/api/instructor/**").hasAnyRole("ADMIN", "INSTRUCTOR")
-                                .requestMatchers("/api/student/**").hasAnyRole("ADMIN", "STUDENT")
-
-                                .anyRequest().authenticated()
+                                .requestMatchers("/api/**").permitAll()
+                                .anyRequest().permitAll()
                 )
-
-                .formLogin(form ->
-                        form
-                                //.loginPage("/showMyLoginPage")
-                                //.loginProcessingUrl("/authenticateTheUser")
-                                .usernameParameter("email")
-                                .permitAll()
-                        )
-                .logout(LogoutConfigurer::permitAll)
-                .exceptionHandling(configurer ->
-                        configurer.accessDeniedPage("/access-denied")
-                );
+                .formLogin(AbstractHttpConfigurer::disable)
+                .httpBasic(AbstractHttpConfigurer::disable);
 
         return http.build();
 

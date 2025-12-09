@@ -19,28 +19,36 @@ public class CourseController {
         this.courseService = courseService;
     }
 
+
     @GetMapping
     public List<Course> getAllCourses(){
         return courseService.getAllCourses();
     }
 
+    @GetMapping("/{id}")
+    public ResponseEntity<?> getCourseById(@PathVariable int id){
+        Course course = courseService.findCourseById(id);
+        return new ResponseEntity<>(course, HttpStatus.OK);
+    }
+
+
+
     @PostMapping
     public ResponseEntity<?> createCourse(@RequestBody Course course){
-        return new ResponseEntity<>(
-                Map.of("message", "Course successfully created!"),
-                HttpStatus.CREATED
+        Course createdCourse = courseService.createCourse(course);
+        return new ResponseEntity<>(createdCourse, HttpStatus.CREATED);
+    }
 
+    @PutMapping("/{id}")
+    public ResponseEntity<?> updateCourse(@PathVariable int id, @RequestBody Course courseDetails){
+        Course updatedCourse = courseService.updateCourse(id, courseDetails);
+        return new ResponseEntity<>(updatedCourse, HttpStatus.OK);
 
-                //WRITE PROPER CRUD OPERATIONS FOR ALL RELEVANT SERVICES AND CONTROLLERS
-
-        );
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteCourse(@PathVariable int id){
-
             courseService.deleteCourse(id);
-
             return new ResponseEntity<>(
                     Map.of("message","Course Deleted Successfully."),
                     HttpStatus.OK

@@ -20,7 +20,7 @@ public class Enrollment {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    private Integer id;
 
     @ManyToOne(fetch = FetchType.LAZY)//many enrollments for one student
     @JoinColumn(name = "student_id", nullable = false)

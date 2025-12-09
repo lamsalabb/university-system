@@ -29,7 +29,7 @@ public class UserService {
     public User registerNewUser(User registrationUser){
 
         if (userRepository.findByEmail(registrationUser.getEmail()).isPresent()) {
-            throw new UserAlreadyExistsException("Registration failed: Email address already in use.");
+            throw new EmailAlreadyExistsException("Registration failed: Email address already in use.");
         }
 
         String hashedPassword = passwordEncoder.encode(registrationUser.getPasswordHash());

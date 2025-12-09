@@ -18,7 +18,7 @@ public class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    private Integer id;
 
     @Email
     @Column(name="email", unique = true)
@@ -39,7 +39,7 @@ public class User {
 
     @Column(name = "is_active")
     @Builder.Default
-    private boolean isActive = true;
+    private Boolean isActive = true;
 
     public enum Role{
         ADMIN, INSTRUCTOR, STUDENT
