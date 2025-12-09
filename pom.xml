@@ -17,7 +17,7 @@
     <packaging>pom</packaging>
 
     <name>university-system</name>
-    <description>Root Aggregator for University System</description>
+    <description>Root pom for university system</description>
 
     <properties>
         <java.version>17</java.version>
