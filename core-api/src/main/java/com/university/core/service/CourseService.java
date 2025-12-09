@@ -2,6 +2,8 @@ package com.university.core.service;
 
 import com.university.common.entity.Course;
 import com.university.common.repository.CourseRepository;
+import com.university.core.exception.CourseAlreadyExistsException;
+import com.university.core.exception.CourseNotFoundException;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
@@ -22,11 +24,10 @@ public class CourseService {
     @Transactional//CREATE
     public Course createCourse(Course course){
         if(courseRepository.findByCode(course.getCode()).isPresent()){
-            throw new RuntimeException("Course with code "+course.getCode()+" already exists.");
+            throw new CourseAlreadyExistsException("Course with code "+course.getCode()+" already exists.");
         }
         return courseRepository.save(course);
     }
-
 
 
 
@@ -36,7 +37,7 @@ public class CourseService {
     }
 
     public Course findCourseById(int id){
-        return courseRepository.findById(id).orElseThrow(() ->new RuntimeException("Course not found with id: "+id));
+        return courseRepository.findById(id).orElseThrow(() ->new CourseNotFoundException("Course not found with id: "+id));
     }
 
 
@@ -58,7 +59,7 @@ public class CourseService {
     @Transactional//DELETE
     public void deleteCourse(int id){
         if (!courseRepository.existsById(id)){
-            throw new RuntimeException("Cannot delete. Course not found with id: " + id);
+            throw new CourseNotFoundException("Cannot delete. Course not found with id: " + id);
         }
         courseRepository.deleteById(id);
     }

@@ -2,6 +2,10 @@ package com.university.core.service;
 
 import com.university.common.entity.User;
 import com.university.common.repository.UserRepository;
+import com.university.core.exception.EmailAlreadyExistsException;
+import com.university.core.exception.EmailNotFoundException;
+import com.university.core.exception.UserAlreadyExistsException;
+import com.university.core.exception.UserNotFoundException;
 import jakarta.transaction.Transactional;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -25,7 +29,7 @@ public class UserService {
     public User registerNewUser(User registrationUser){
 
         if (userRepository.findByEmail(registrationUser.getEmail()).isPresent()) {
-            throw new IllegalArgumentException("Registration failed: Email address already in use.");
+            throw new UserAlreadyExistsException("Registration failed: Email address already in use.");
         }
 
         String hashedPassword = passwordEncoder.encode(registrationUser.getPasswordHash());
@@ -50,13 +54,13 @@ public class UserService {
 
     public User findUserById(int id){
         return userRepository.findById(id).orElseThrow(
-                () -> new RuntimeException("User not found with id: " + id)
+                () -> new UserNotFoundException("User not found with id: " + id)
         );
     }
 
     public User findUserByEmail(String email){
         return userRepository.findByEmail(email).orElseThrow(
-                () -> new RuntimeException("Email doesn't exist.")
+                () -> new EmailNotFoundException("Email doesn't exist.")
         );
     }
 
@@ -77,7 +81,7 @@ public class UserService {
         if (!existingUser.getEmail().equals(updatedUserDetails.getEmail())){
             userRepository.findByEmail(updatedUserDetails.getEmail()).ifPresent(
                     (userWithSameEmail) -> {
-                        throw new RuntimeException("Email already exists. Please enter unique email.");
+                        throw new EmailAlreadyExistsException("Email already exists. Please enter unique email.");
                     }
             );//check for unique email before updating
             existingUser.setEmail(updatedUserDetails.getEmail());
@@ -96,7 +100,7 @@ public class UserService {
     @Transactional//DELETE
     public void deleteUser(int id){
         if(!userRepository.existsById(id)){
-            throw new RuntimeException("Cannot delete. User not found with id: " + id);
+            throw new UserNotFoundException("Cannot delete. User not found with id: " + id);
         }
         userRepository.deleteById(id);
     }

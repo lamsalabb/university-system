@@ -25,24 +25,10 @@ public class RegistrationController {
     @PostMapping("/register")//checking for unique entries
     public ResponseEntity<?> registerUser(@RequestBody User registrationUser) {
 
-            try {
                 userService.registerNewUser(registrationUser);
                 return new ResponseEntity<>(
                         Map.of("message", "User registered successfully!"),
                         HttpStatus.CREATED);
-            }
-            catch (IllegalArgumentException e){
-                return new ResponseEntity<>(
-                        Map.of("message", e.getMessage()),
-                        HttpStatus.CONFLICT
-                );
-            }
-            catch (Exception e) {
-                //if any exception occurs, it won't create user
-                return new ResponseEntity<>(
-                        Map.of("message", "Registration failed due to internal server error."),
-                        HttpStatus.INTERNAL_SERVER_ERROR);
 
-            }
         }
 }

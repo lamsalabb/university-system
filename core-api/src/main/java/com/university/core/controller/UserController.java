@@ -26,62 +26,32 @@ public class UserController {
 
     @GetMapping("/{id}")
     public ResponseEntity<?> getUserById(@PathVariable int id){
-        try{
             User user = userService.findUserById(id);
             return new ResponseEntity<>(user, HttpStatus.OK);
-        }
-        catch (RuntimeException e){
-            return new ResponseEntity<>(
-                    Map.of("message",e.getMessage()),
-                    HttpStatus.NOT_FOUND
-            );
-        }
     }
 
 
     @PostMapping//Admin creation
-    public ResponseEntity<?> createUser(@RequestBody User user){
-        try{
-            User User = userService.registerNewUser(user);
+    public ResponseEntity<?> createUser(@RequestBody User newUser){
+            User user = userService.registerNewUser(newUser);
             return new ResponseEntity<>(user, HttpStatus.CREATED);
-        }
-        catch (RuntimeException e){
-            return new ResponseEntity<>(
-                    Map.of("message",e.getMessage()),
-                    HttpStatus.CONFLICT
-            );
-        }
     }
+
 
     @PutMapping("/{id}")
     public ResponseEntity<?> updateUser(@PathVariable int id, @RequestBody User userDetails){
-        try {
             User updatedUser = userService.updateUser(id, userDetails);
             return new ResponseEntity<>(updatedUser, HttpStatus.OK);
-        }
-        catch (RuntimeException e){
-            return new ResponseEntity<>(
-                    Map.of("message",e.getMessage()),
-                    HttpStatus.NOT_FOUND
-            );
-        }
+
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteUser(@PathVariable int id){
-        try {
             userService.deleteUser(id);
             return new ResponseEntity<>(
                     Map.of("message","User deleted Successfully."),
                     HttpStatus.OK
             );
-        }
-        catch (RuntimeException e){
-            return new ResponseEntity<>(
-                    Map.of("message",e.getMessage()),
-                    HttpStatus.NOT_FOUND
-            );
-        }
     }
 
 
