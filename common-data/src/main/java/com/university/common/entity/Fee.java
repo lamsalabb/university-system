@@ -37,11 +37,12 @@ public class Fee {
     @Column(name = "due_date",nullable = false)
     private LocalDate dueDate;
 
-    @Column(name = "payment_due")
+    @Column(name = "payment_date")
     private LocalDate paymentDate;
 
     public enum Type{
         TUITION, LAB, LIBRARY, OTHER
     }
+
 
 }

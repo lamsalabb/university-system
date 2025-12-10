@@ -7,6 +7,7 @@ import com.university.common.repository.CourseRepository;
 import com.university.common.repository.EnrollmentRepository;
 import com.university.common.repository.UserRepository;
 import com.university.core.exception.*;
+import com.university.fee.OutstandingFeesException;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
@@ -19,11 +20,13 @@ public class EnrollmentService {
     private final EnrollmentRepository enrollmentRepository;
     private final UserRepository userRepository;
     private final CourseRepository courseRepository;
+    private final FeeService feeService;
 
-    public EnrollmentService(EnrollmentRepository enrollmentRepository, UserRepository userRepository, CourseRepository courseRepository) {
+    public EnrollmentService(EnrollmentRepository enrollmentRepository, UserRepository userRepository, CourseRepository courseRepository, FeeService feeService) {
         this.enrollmentRepository = enrollmentRepository;
         this.userRepository = userRepository;
         this.courseRepository = courseRepository;
+        this.feeService = feeService;
     }
 
     //save a new enrollment
@@ -38,6 +41,10 @@ public class EnrollmentService {
             throw new NonStudentEnrollmentException("Only students can be enrolled");
         }
 
+        int threshold = 4000;
+        if(feeService.hasOutstandingFeesAboveThreshold(student.getId(), threshold)){
+            throw new OutstandingFeesException("Enrollment blocked: Please clear the outstanding fees. Exceeded: "+ threshold);
+        }
         Course course = courseRepository.findById(enrollmentRequest.getCourse().getId()).orElseThrow(
                 () -> new CourseNotFoundException("Course not found with id: " + enrollmentRequest.getCourse().getId())
         );

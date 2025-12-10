@@ -1,5 +1,6 @@
 package com.university.core.exception;
 
+import com.university.fee.OutstandingFeesException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -56,6 +57,13 @@ public class GlobalExceptionHandler {
     public ResponseEntity<?> handleNonStudentEnrollment(NonStudentEnrollmentException e){
         return buildErrorResponse(HttpStatus.UNPROCESSABLE_CONTENT, e.getMessage());
     }
+
+    @ExceptionHandler(OutstandingFeesException.class)
+    public ResponseEntity<?> handleOutstandingFees(OutstandingFeesException e){
+        return buildErrorResponse(HttpStatus.UNPROCESSABLE_CONTENT, e.getMessage());
+    }
+
+
 
     @ExceptionHandler(Exception.class)//fallback for any generic exceptions
     public ResponseEntity<?> handleGenericException(Exception e){
