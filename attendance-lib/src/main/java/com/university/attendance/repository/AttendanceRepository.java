@@ -9,7 +9,11 @@ import java.util.List;
 import java.util.Optional;
 
 public interface AttendanceRepository extends JpaRepository<Attendance, Integer> {
-    List<Attendance> findByEnrollment(Enrollment enrollment);
+    List<Attendance> findByEnrollmentId(int enrollmentId);
 
-    Optional<Attendance> findByEnrollmentAndSessionDate(Enrollment enrollment, LocalDate sessionDate);
+    List<Attendance> findByEnrollmentStudentId(int studentId);
+
+    List<Attendance> findByEnrollmentStudentIdAndEnrollmentCourseId(int studentId, int courseId);
+
+    Optional<Attendance> findByEnrollmentIdAndSessionDate(int enrollmentId, LocalDate sessionDate);
 }

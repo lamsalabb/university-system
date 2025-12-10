@@ -1,6 +1,8 @@
 package com.university.core.exception;
 
-import com.university.fee.OutstandingFeesException;
+import com.university.attendance.exception.AttendanceNotFoundException;
+import com.university.fee.exception.FeeNotFoundException;
+import com.university.fee.exception.OutstandingFeesException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -29,6 +31,16 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(EnrollmentNotFoundException.class)
     public ResponseEntity<?> handleEnrollmentNotFound(EnrollmentNotFoundException e){
+        return buildErrorResponse(HttpStatus.NOT_FOUND, e.getMessage());
+    }
+
+    @ExceptionHandler(AttendanceNotFoundException.class)
+    public ResponseEntity<?> handleAttendanceNotFoundException(AttendanceNotFoundException e){
+        return buildErrorResponse(HttpStatus.NOT_FOUND, e.getMessage());
+    }
+
+    @ExceptionHandler(FeeNotFoundException.class)
+    public ResponseEntity<?> handleFeeNotFoundException(FeeNotFoundException e){
         return buildErrorResponse(HttpStatus.NOT_FOUND, e.getMessage());
     }
 
@@ -62,7 +74,6 @@ public class GlobalExceptionHandler {
     public ResponseEntity<?> handleOutstandingFees(OutstandingFeesException e){
         return buildErrorResponse(HttpStatus.UNPROCESSABLE_CONTENT, e.getMessage());
     }
-
 
 
     @ExceptionHandler(Exception.class)//fallback for any generic exceptions

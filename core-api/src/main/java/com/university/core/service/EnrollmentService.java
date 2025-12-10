@@ -7,7 +7,7 @@ import com.university.common.repository.CourseRepository;
 import com.university.common.repository.EnrollmentRepository;
 import com.university.common.repository.UserRepository;
 import com.university.core.exception.*;
-import com.university.fee.OutstandingFeesException;
+import com.university.fee.exception.OutstandingFeesException;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 

@@ -1,4 +1,4 @@
-package com.university.fee;
+package com.university.fee.exception;
 
 public class FeeNotFoundException extends RuntimeException {
     public FeeNotFoundException(String message) {
