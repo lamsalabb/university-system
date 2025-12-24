@@ -29,8 +29,8 @@ public class AttendanceController {
     }
 
     @GetMapping("/student/{studentId}")
-    public List<Attendance> getByStudent(@PathVariable int id){
-        return attendanceService.getAttendanceByStudent(id);
+    public List<Attendance> getByStudent(@PathVariable int studentId){
+        return attendanceService.getAttendanceByStudent(studentId);
     }
 
     @GetMapping("/student/{studentId}/course/{courseId}")

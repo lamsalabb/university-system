@@ -1,4 +1,4 @@
-package com.university.reporting.dto;
+package com.university.reporting.contract.dto;
 
 public class AverageGradeDTO {
 
@@ -6,7 +6,6 @@ public class AverageGradeDTO {
     private String courseCode;
     private Double averageGrade;
 
-    // 🚨 EXACT match for JPQL constructor
     public AverageGradeDTO(
             Integer courseId,
             String courseCode,

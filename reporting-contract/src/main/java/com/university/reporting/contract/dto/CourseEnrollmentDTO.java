@@ -1,4 +1,4 @@
-package com.university.reporting.dto;
+package com.university.reporting.contract.dto;
 
 public class CourseEnrollmentDTO {
 

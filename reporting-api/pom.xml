@@ -57,6 +57,13 @@
 			<scope>test</scope>
 		</dependency>
 
+		<dependency>
+			<groupId>com.university</groupId>
+			<artifactId>reporting-contract</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+
+
 	</dependencies>
 
 	<build>

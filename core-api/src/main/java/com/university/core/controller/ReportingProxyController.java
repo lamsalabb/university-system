@@ -1,9 +1,9 @@
-package com.university.reporting.controller;
+package com.university.core.controller;
 
+import com.university.core.client.ReportingClient;
 import com.university.reporting.contract.dto.ActiveStudentDTO;
 import com.university.reporting.contract.dto.AverageGradeDTO;
 import com.university.reporting.contract.dto.CourseEnrollmentDTO;
-import com.university.reporting.service.ReportingService;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -12,28 +12,26 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/reports")
-public class ReportingController {
+public class ReportingProxyController {
 
-    private final ReportingService service;
+    private final ReportingClient reportingClient;
 
-    public ReportingController(ReportingService service) {
-        this.service = service;
+    public ReportingProxyController(ReportingClient reportingClient) {
+        this.reportingClient = reportingClient;
     }
 
     @GetMapping("/active-students")
     public List<ActiveStudentDTO> activeStudents() {
-        return service.activeStudents();
-    }
-
-    @GetMapping("/enrollment-by-course")
-    public List<CourseEnrollmentDTO> enrollmentByCourse() {
-        return service.courseEnrollment();
+        return reportingClient.getActiveStudents();
     }
 
     @GetMapping("/average-grades")
     public List<AverageGradeDTO> averageGrades() {
-        return service.averageGrades();
+        return reportingClient.getAverageGrades();
     }
 
-
+    @GetMapping("/course-enrollment")
+    public List<CourseEnrollmentDTO> courseEnrollments() {
+        return reportingClient.getCourseEnrollmentStats();
+    }
 }

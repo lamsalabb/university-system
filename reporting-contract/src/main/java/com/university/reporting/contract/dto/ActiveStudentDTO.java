@@ -1,4 +1,4 @@
-package com.university.reporting.dto;
+package com.university.reporting.contract.dto;
 
 public class ActiveStudentDTO {
 
@@ -7,7 +7,6 @@ public class ActiveStudentDTO {
     private String firstName;
     private String lastName;
 
-    // 🚨 THIS is what Hibernate needs
     public ActiveStudentDTO(
             Integer studentId,
             String email,
@@ -20,7 +19,6 @@ public class ActiveStudentDTO {
         this.lastName = lastName;
     }
 
-    // getters (can be Lombok if you want)
     public Integer getStudentId() { return studentId; }
     public String getEmail() { return email; }
     public String getFirstName() { return firstName; }
