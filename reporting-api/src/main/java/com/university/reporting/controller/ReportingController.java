@@ -25,15 +25,12 @@ public class ReportingController {
         return service.activeStudents();
     }
 
-    @GetMapping("/enrollment-by-course")
+    @GetMapping("/course-enrollment")
     public List<CourseEnrollmentDTO> enrollmentByCourse() {
         return service.courseEnrollment();
     }
-
     @GetMapping("/average-grades")
     public List<AverageGradeDTO> averageGrades() {
         return service.averageGrades();
     }
-
-
 }
