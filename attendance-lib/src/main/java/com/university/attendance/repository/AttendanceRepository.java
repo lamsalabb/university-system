@@ -16,4 +16,6 @@ public interface AttendanceRepository extends JpaRepository<Attendance, Integer>
     List<Attendance> findByEnrollmentStudentIdAndEnrollmentCourseId(int studentId, int courseId);
 
     Optional<Attendance> findByEnrollmentIdAndSessionDate(int enrollmentId, LocalDate sessionDate);
+
+    List<Attendance> findByEnrollmentIn(List<Enrollment> enrollments);
 }

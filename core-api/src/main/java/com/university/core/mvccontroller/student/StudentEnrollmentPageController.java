@@ -1,4 +1,4 @@
-package com.university.core.mvccontroller;
+package com.university.core.mvccontroller.student;
 
 import com.university.common.entity.Course;
 import com.university.common.entity.Enrollment;

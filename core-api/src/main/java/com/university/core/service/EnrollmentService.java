@@ -94,6 +94,21 @@ public class EnrollmentService {
 
         return enrollmentRepository.save(enrollment);
     }
+    public List<Course> getCoursesByInstructor(int instructorId) {
+        return enrollmentRepository
+                .findByCourse_Instructor_Id(instructorId)
+                .stream()
+                .map(Enrollment::getCourse)
+                .distinct()
+                .toList();
+    }
+
+    public List<Enrollment> getEnrollmentsByInstructor(int instructorId) {
+        return enrollmentRepository.findByCourseInstructorId(instructorId);
+    }
+
+
+
 
 
 

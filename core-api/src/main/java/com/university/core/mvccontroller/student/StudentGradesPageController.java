@@ -1,4 +1,4 @@
-package com.university.core.mvccontroller;
+package com.university.core.mvccontroller.student;
 
 import com.university.common.entity.User;
 import com.university.core.service.EnrollmentService;
@@ -11,28 +11,28 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 @Controller
 @RequestMapping("/student")
-public class StudentCoursePageController {
+public class StudentGradesPageController {
 
     private final EnrollmentService enrollmentService;
     private final UserService userService;
 
-    public StudentCoursePageController(EnrollmentService enrollmentService,
-                                       UserService userService) {
+    public StudentGradesPageController(EnrollmentService enrollmentService,
+                                   UserService userService) {
         this.enrollmentService = enrollmentService;
         this.userService = userService;
     }
 
-    @GetMapping("/courses")
-    public String courses(Authentication auth, Model model) {
+    @GetMapping("/grades")
+    public String grades(Authentication auth, Model model) {
 
-        String email = auth.getName();
-        User student = userService.findUserByEmail(email);
+        String email = auth.getName(); // ✔ Spring Security user
+        User student = userService.findUserByEmail(email); // ✔ JPA user
 
         model.addAttribute(
                 "enrollments",
                 enrollmentService.getEnrollmentByStudent(student.getId())
         );
 
-        return "student/courses";
+        return "student/grades";
     }
 }

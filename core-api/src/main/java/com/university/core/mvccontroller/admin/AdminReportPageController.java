@@ -1,4 +1,4 @@
-package com.university.core.mvccontroller;
+package com.university.core.mvccontroller.admin;
 
 import com.university.core.client.ReportingClient;
 import org.springframework.stereotype.Controller;
