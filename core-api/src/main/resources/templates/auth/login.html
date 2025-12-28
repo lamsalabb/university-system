@@ -14,21 +14,12 @@
 <body class="bg-light d-flex flex-column min-vh-100">
 
 <!-- HEADER -->
-<div th:replace="~{fragments/header :: header}"></div>
+<div th:replace="~{fragments/header-login :: body}"></div>
 <!-- LOGIN CONTENT -->
 <main class="flex-grow-1 d-flex align-items-center justify-content-center">
     <div class="card shadow-lg border-0 p-4" style="width: 420px;">
 
-        <div class="text-center mb-4">
-            <button type="button"
-                    class="btn btn-white border-warning shadow-none p-0"
-                    style="width: 120px; height: 60px;">
-                <img src="/images/logos/compinverselogo.png"
-                     alt="Logo"
-                     class="img-fluid rounded"
-                     style="object-fit: cover; width: 100%; height: 100%;">
-            </button>
-        </div>
+
 
         <h4 class="text-center mb-3 fw-bold">Sign In</h4>
 
@@ -85,7 +76,6 @@
     </div>
 </main>
 
-<!-- FOOTER -->
 <div th:replace="~{fragments/footer :: footer}"></div>
 </body>
 </html>

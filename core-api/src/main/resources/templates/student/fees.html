@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <title>My Fees | University System</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+          rel="stylesheet">
+</head>
+
+<body class="bg-light d-flex flex-column min-vh-100">
+
+<!-- HEADER -->
+<div th:replace="~{fragments/header :: header}"></div>
+
+<!-- MAIN CONTENT -->
+<main class="container py-5 flex-grow-1">
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h3 class="fw-bold mb-0">My Fees</h3>
+        <span class="badge bg-info fs-6">
+            Outstanding: $
+            <span th:text="${outstanding}">0</span>
+        </span>
+    </div>
+
+    <!-- FEES TABLE CARD -->
+    <div class="card shadow-sm border-0">
+
+        <div class="card-body p-0">
+
+            <table class="table table-hover mb-0">
+                <thead class="table-dark">
+                <tr>
+                    <th>ID</th>
+                    <th>Type</th>
+                    <th>Amount</th>
+                    <th>Status</th>
+                    <th>Due Date</th>
+                    <th>Payment Date</th>
+                </tr>
+                </thead>
+
+                <tbody>
+                <tr th:each="fee : ${fees}">
+                    <td th:text="${fee.id}">1</td>
+
+                    <td>
+                        <span class="badge bg-secondary"
+                              th:text="${fee.type}">
+                            TUITION
+                        </span>
+                    </td>
+
+                    <td th:text="'$' + ${fee.amount}">
+                        $0
+                    </td>
+
+                    <td>
+                        <span class="badge bg-success"
+                              th:if="${fee.isPaid}">
+                            Paid
+                        </span>
+                        <span class="badge bg-danger"
+                              th:if="${!fee.isPaid}">
+                            Unpaid
+                        </span>
+                    </td>
+
+                    <td th:text="${fee.dueDate}">
+                        2025-01-01
+                    </td>
+
+                    <td th:text="${fee.paymentDate != null ? fee.paymentDate : '-'}">
+                        -
+                    </td>
+                </tr>
+
+                <tr th:if="${#lists.isEmpty(fees)}">
+                    <td colspan="6" class="text-center text-muted py-4">
+                        No fee records found.
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+
+        </div>
+    </div>
+
+</main>
+
+<!-- FOOTER -->
+<div th:replace="~{fragments/footer :: footer}"></div>
+
+</body>
+</html>

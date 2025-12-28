@@ -1,7 +1,7 @@
 package com.university.core.mvccontroller;
 
 import com.university.common.entity.User;
-import com.university.core.service.FeeService;
+import com.university.core.service.AttendanceService;
 import com.university.core.service.UserService;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
@@ -11,33 +11,28 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 @Controller
 @RequestMapping("/student")
-public class StudentFeePageController {
+public class StudentAttendancePageController {
 
-    private final FeeService feeService;
+    private final AttendanceService attendanceService;
     private final UserService userService;
 
-    public StudentFeePageController(FeeService feeService,
-                                    UserService userService) {
-        this.feeService = feeService;
+    public StudentAttendancePageController(AttendanceService attendanceService,
+                                           UserService userService) {
+        this.attendanceService = attendanceService;
         this.userService = userService;
     }
 
-    @GetMapping("/fees")
-    public String fees(Authentication auth, Model model) {
+    @GetMapping("/attendance")
+    public String attendance(Authentication auth, Model model) {
 
         String email = auth.getName();
         User student = userService.findUserByEmail(email);
 
         model.addAttribute(
-                "fees",
-                feeService.getFeesByStudent(student.getId())
+                "attendanceList",
+                attendanceService.getAttendanceByStudent(student.getId())
         );
 
-        model.addAttribute(
-                "outstanding",
-                feeService.calculateOutstandingFee(student.getId())
-        );
-
-        return "student/fees";
+        return "student/attendance";
     }
 }

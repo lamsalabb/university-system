@@ -85,6 +85,17 @@ public class EnrollmentService {
                 () -> new EnrollmentNotFoundException("Enrollment not found with id: " + id)
         );
     }
+    @Transactional
+    public Enrollment assignGrade(int enrollmentId, String grade) {
+        Enrollment enrollment = getEnrollmentById(enrollmentId);
+
+        enrollment.setGrade(grade);
+        enrollment.setStatus(Enrollment.Status.COMPLETED);
+
+        return enrollmentRepository.save(enrollment);
+    }
+
+
 
 
 
