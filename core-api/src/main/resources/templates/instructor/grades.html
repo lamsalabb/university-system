@@ -18,16 +18,38 @@
 <!-- MAIN CONTENT -->
 <main class="flex-grow-1 container py-5">
 
-  <div class="d-flex justify-content-between align-items-center mb-4">
-    <h3 class="fw-bold">Student Grades</h3>
-    <span class="text-muted">Assign & update grades</span>
+  <!-- HEADER + FILTERS -->
+  <div class="d-flex flex-wrap justify-content-between align-items-center mb-4 gap-3">
+    <div>
+      <h3 class="fw-bold mb-0">Student Grades</h3>
+      <span class="text-muted">Assign & update grades</span>
+    </div>
+
+    <div class="d-flex gap-2">
+
+      <!-- COURSE FILTER -->
+      <select id="courseFilter"
+              class="form-select form-select-sm"
+              style="width: 220px;">
+        <option value="">All Courses</option>
+      </select>
+
+      <!-- SEMESTER FILTER -->
+      <select id="semesterFilter"
+              class="form-select form-select-sm"
+              style="width: 200px;">
+        <option value="">All Semesters</option>
+      </select>
+
+    </div>
   </div>
 
   <div class="card shadow-sm border-0">
-    <div class="card-body">
+    <div class="card-body p-0">
 
       <div class="table-responsive">
-        <table class="table table-hover align-middle">
+        <table id="gradesTable"
+               class="table table-hover align-middle mb-0">
 
           <thead class="table-light">
           <tr>
@@ -41,7 +63,9 @@
           </thead>
 
           <tbody>
-          <tr th:each="enrollment : ${enrollments}">
+          <tr th:each="enrollment : ${enrollments}"
+              th:data-course="${enrollment.course.code + ' - ' + enrollment.course.title}"
+              th:data-semester="${enrollment.semester}">
 
             <!-- Student -->
             <td th:text="${enrollment.student.firstName + ' ' + enrollment.student.lastName}">
@@ -62,15 +86,14 @@
             <td>
                             <span class="badge"
                                   th:classappend="${enrollment.status.name() == 'COMPLETED'} ? 'bg-success'
-                                                  : (${enrollment.status.name() == 'ENROLLED'} ? 'bg-warning text-dark'
-                                                  : 'bg-secondary')"
+                                  : (${enrollment.status.name() == 'ENROLLED'} ? 'bg-warning text-dark'
+                                  : 'bg-secondary')"
                                   th:text="${enrollment.status}">
                             </span>
             </td>
 
             <!-- Grade + Save -->
             <td colspan="2">
-
               <form th:action="@{/instructor/grades/update}"
                     method="post"
                     class="d-flex gap-2 align-items-center">
@@ -99,9 +122,7 @@
                 </button>
 
               </form>
-
             </td>
-
           </tr>
 
           <tr th:if="${#lists.isEmpty(enrollments)}">
@@ -109,8 +130,8 @@
               No enrollments found.
             </td>
           </tr>
-
           </tbody>
+
         </table>
       </div>
 
@@ -121,6 +142,54 @@
 
 <!-- FOOTER -->
 <div th:replace="~{fragments/footer :: footer}"></div>
+
+<!-- FILTER SCRIPT -->
+<script>
+  const courseFilter = document.getElementById("courseFilter");
+  const semesterFilter = document.getElementById("semesterFilter");
+
+  const rows = Array.from(
+          document.querySelectorAll("#gradesTable tbody tr")
+  ).filter(r => r.dataset.course);
+
+  /* Populate filters */
+  const courses = [...new Set(rows.map(r => r.dataset.course))].sort();
+  const semesters = [...new Set(rows.map(r => r.dataset.semester))].sort();
+
+  courses.forEach(c => {
+    const opt = document.createElement("option");
+    opt.value = c;
+    opt.textContent = c;
+    courseFilter.appendChild(opt);
+  });
+
+  semesters.forEach(s => {
+    const opt = document.createElement("option");
+    opt.value = s;
+    opt.textContent = s;
+    semesterFilter.appendChild(opt);
+  });
+
+  /* Apply filters */
+  function applyFilters() {
+    const selectedCourse = courseFilter.value;
+    const selectedSemester = semesterFilter.value;
+
+    rows.forEach(row => {
+      const matchCourse =
+              !selectedCourse || row.dataset.course === selectedCourse;
+
+      const matchSemester =
+              !selectedSemester || row.dataset.semester === selectedSemester;
+
+      row.style.display =
+              matchCourse && matchSemester ? "" : "none";
+    });
+  }
+
+  courseFilter.addEventListener("change", applyFilters);
+  semesterFilter.addEventListener("change", applyFilters);
+</script>
 
 </body>
 </html>

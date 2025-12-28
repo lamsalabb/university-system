@@ -2,50 +2,170 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <title>Attendance</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+          rel="stylesheet">
 </head>
 
 <body class="bg-light d-flex flex-column min-vh-100">
 
+<!-- HEADER -->
 <div th:replace="~{fragments/header :: header}"></div>
 
 <main class="container py-5 flex-grow-1">
 
-    <h3 class="fw-bold mb-4">Attendance Records</h3>
+    <!-- PAGE HEADER -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h3 class="fw-bold mb-0">Attendance Records</h3>
 
-    <table class="table table-striped shadow-sm bg-white">
-        <thead class="table-dark">
-        <tr>
-            <th>Course</th>
-            <th>Date</th>
-            <th>Status</th>
-            <th>Remarks</th>
-        </tr>
-        </thead>
+        <!-- CONTROLS -->
+        <div class="d-flex gap-2">
 
-        <tbody>
-        <tr th:each="a : ${attendanceList}">
-            <td th:text="${a.enrollment.course.title}">Course</td>
-            <td th:text="${a.sessionDate}">2025-01-01</td>
-            <td>
-                <span class="badge bg-success" th:if="${a.status.name() == 'PRESENT'}">Present</span>
-                <span class="badge bg-danger" th:if="${a.status.name() == 'ABSENT'}">Absent</span>
-                <span class="badge bg-warning text-dark" th:if="${a.status.name() == 'EXCUSED'}">Excused</span>
-            </td>
-            <td th:text="${a.remarks}">—</td>
-        </tr>
+            <!-- COURSE FILTER -->
+            <select id="courseFilter"
+                    class="form-select form-select-sm"
+                    style="width: 220px;">
+                <option value="">All Courses</option>
+            </select>
 
-        <tr th:if="${#lists.isEmpty(attendanceList)}">
-            <td colspan="4" class="text-center text-muted">
-                No attendance records available.
-            </td>
-        </tr>
-        </tbody>
-    </table>
+            <!-- SORT DROPDOWN -->
+            <select id="sortSelect"
+                    class="form-select form-select-sm"
+                    style="width: 220px;">
+                <option value="dateDesc">Date (Newest first)</option>
+                <option value="dateAsc">Date (Oldest first)</option>
+                <option value="courseAsc">Course (A–Z)</option>
+                <option value="statusAsc">Status</option>
+            </select>
+
+        </div>
+    </div>
+
+    <!-- TABLE -->
+    <div class="card shadow-sm border-0">
+        <div class="card-body p-0">
+
+            <div class="table-responsive">
+                <table id="attendanceTable"
+                       class="table table-striped mb-0 align-middle">
+
+                    <thead class="table-dark">
+                    <tr>
+                        <th>Course</th>
+                        <th>Date</th>
+                        <th>Status</th>
+                        <th>Remarks</th>
+                    </tr>
+                    </thead>
+
+                    <tbody>
+                    <tr th:each="a : ${attendanceList}"
+                        th:data-course="${a.enrollment.course.title}">
+
+                        <td th:text="${a.enrollment.course.title}">
+                            Course
+                        </td>
+
+                        <!-- DATE (for sorting) -->
+                        <td th:text="${a.sessionDate}"
+                            th:data-date="${a.sessionDate}">
+                            2025-01-01
+                        </td>
+
+                        <!-- STATUS (for sorting) -->
+                        <td th:data-status="${a.status.name()}">
+                            <span class="badge bg-success"
+                                  th:if="${a.status.name() == 'PRESENT'}">
+                                Present
+                            </span>
+                            <span class="badge bg-danger"
+                                  th:if="${a.status.name() == 'ABSENT'}">
+                                Absent
+                            </span>
+                            <span class="badge bg-warning text-dark"
+                                  th:if="${a.status.name() == 'EXCUSED'}">
+                                Excused
+                            </span>
+                        </td>
+
+                        <td th:text="${a.remarks ?: '—'}">—</td>
+                    </tr>
+
+                    <tr th:if="${#lists.isEmpty(attendanceList)}">
+                        <td colspan="4"
+                            class="text-center text-muted py-4">
+                            No attendance records available.
+                        </td>
+                    </tr>
+                    </tbody>
+
+                </table>
+            </div>
+
+        </div>
+    </div>
 
 </main>
 
+<!-- FOOTER -->
 <div th:replace="~{fragments/footer :: footer}"></div>
+
+<!-- SORT + FILTER SCRIPT -->
+<script>
+    const sortSelect = document.getElementById("sortSelect");
+    const courseFilter = document.getElementById("courseFilter");
+    const tableBody = document.querySelector("#attendanceTable tbody");
+    const rows = Array.from(tableBody.querySelectorAll("tr"))
+        .filter(r => r.dataset.course);
+
+    /* Populate course filter */
+    const courses = [...new Set(rows.map(r => r.dataset.course))].sort();
+    courses.forEach(course => {
+        const opt = document.createElement("option");
+        opt.value = course;
+        opt.textContent = course;
+        courseFilter.appendChild(opt);
+    });
+
+    function applyFiltersAndSort() {
+        const selectedCourse = courseFilter.value;
+        const mode = sortSelect.value;
+
+        let visibleRows = rows.filter(r =>
+            !selectedCourse || r.dataset.course === selectedCourse
+        );
+
+        visibleRows.sort((a, b) => {
+            if (mode === "dateDesc" || mode === "dateAsc") {
+                const da = new Date(a.children[1].dataset.date);
+                const db = new Date(b.children[1].dataset.date);
+                return mode === "dateAsc" ? da - db : db - da;
+            }
+
+            if (mode === "courseAsc") {
+                return a.children[0].innerText
+                    .localeCompare(b.children[0].innerText);
+            }
+
+            if (mode === "statusAsc") {
+                return a.children[2].dataset.status
+                    .localeCompare(b.children[2].dataset.status);
+            }
+
+            return 0;
+        });
+
+        /* Re-render */
+        rows.forEach(r => r.style.display = "none");
+        visibleRows.forEach(r => {
+            r.style.display = "";
+            tableBody.appendChild(r);
+        });
+    }
+
+    sortSelect.addEventListener("change", applyFiltersAndSort);
+    courseFilter.addEventListener("change", applyFiltersAndSort);
+</script>
 
 </body>
 </html>
