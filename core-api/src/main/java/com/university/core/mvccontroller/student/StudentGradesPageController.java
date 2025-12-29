@@ -25,8 +25,8 @@ public class StudentGradesPageController {
     @GetMapping("/grades")
     public String grades(Authentication auth, Model model) {
 
-        String email = auth.getName(); // ✔ Spring Security user
-        User student = userService.findUserByEmail(email); // ✔ JPA user
+        String email = auth.getName();
+        User student = userService.findUserByEmail(email);
 
         model.addAttribute(
                 "enrollments",

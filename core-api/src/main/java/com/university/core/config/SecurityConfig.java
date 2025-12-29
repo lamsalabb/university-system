@@ -41,7 +41,7 @@ public class SecurityConfig {
                         .loginPage("/login")
                         .loginProcessingUrl("/login")
                         .defaultSuccessUrl("/dashboard", true)
-                        .failureUrl("/login?error=true") // ✅ important
+                        .failureUrl("/login?error=true")
                         .permitAll()
                 )
 

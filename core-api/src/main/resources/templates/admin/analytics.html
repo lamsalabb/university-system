@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Admin | Analytics & Insights</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+
+<body class="bg-light d-flex flex-column min-vh-100">
+
+<div th:replace="~{fragments/header :: header}"></div>
+
+<main class="container py-5 flex-grow-1">
+
+    <div class="mb-4">
+        <h3 class="fw-bold">Analytics & Insights</h3>
+        <span class="text-muted">System-wide academic insights</span>
+    </div>
+
+    <div class="row g-4">
+
+        <div class="col-md-4">
+            <div class="card shadow-sm border-0 h-100">
+                <div class="card-body d-flex flex-column justify-content-center align-items-center text-center">
+                    <h6 class="fw-semibold mb-3">Active Students</h6>
+                    <h1 id="activeStudentCount" class="display-3 fw-bold text-success">0</h1>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-8">
+            <div class="card shadow-sm border-0 h-100">
+                <div class="card-body">
+                    <h6 class="fw-semibold mb-3">Average Grades per Course</h6>
+                    <canvas id="averageGradesChart" height="140"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-12">
+            <div class="card shadow-sm border-0">
+                <div class="card-body d-flex flex-column align-items-center">
+                    <h6 class="fw-semibold mb-3">Course Enrollment Distribution</h6>
+                    <div class="d-flex align-items-center justify-content-center" style="height:320px;">
+                        <canvas id="courseEnrollmentChart" style="max-width:360px; max-height:360px;"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+</main>
+
+<div th:replace="~{fragments/footer :: footer}"></div>
+
+<script>
+    function gpaToLetter(gpa) {
+        if (gpa >= 3.85) return 'A'
+        if (gpa >= 3.5) return 'A-'
+        if (gpa >= 3.15) return 'B+'
+        if (gpa >= 2.85) return 'B'
+        if (gpa >= 2.5) return 'B-'
+        if (gpa >= 2.15) return 'C+'
+        if (gpa >= 1.85) return 'C'
+        if (gpa >= 1.5) return 'C-'
+        if (gpa >= 1.0) return 'D'
+        return 'F'
+    }
+
+    fetch('/api/reports/active-students')
+        .then(r => r.json())
+        .then(data => {
+            document.getElementById('activeStudentCount').innerText = data.length
+        })
+
+    fetch('/api/reports/average-grades')
+        .then(r => r.json())
+        .then(data => {
+            new Chart(document.getElementById('averageGradesChart'), {
+                type: 'bar',
+                data: {
+                    labels: data.map(d => d.courseCode),
+                    datasets: [{
+                        data: data.map(d => d.averageGrade),
+                        backgroundColor: '#0d6efd'
+                    }]
+                },
+                options: {
+                    scales: {
+                        y: {
+                            min: 0,
+                            max: 4,
+                            ticks: {
+                                callback: v => gpaToLetter(v)
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            callbacks: {
+                                label: ctx => 'Grade: ' + gpaToLetter(ctx.raw)
+                            }
+                        }
+                    }
+                }
+            })
+        })
+
+    fetch('/api/reports/course-enrollment')
+        .then(r => r.json())
+        .then(data => {
+            new Chart(document.getElementById('courseEnrollmentChart'), {
+                type: 'pie',
+                data: {
+                    labels: data.map(d => d.courseCode),
+                    datasets: [{
+                        data: data.map(d => d.enrollmentCount),
+                        backgroundColor: [
+                            '#0d6efd', '#198754', '#ffc107',
+                            '#dc3545', '#6f42c1', '#20c997'
+                        ]
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom'
+                        }
+                    }
+                }
+            })
+        })
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+</body>
+</html>
