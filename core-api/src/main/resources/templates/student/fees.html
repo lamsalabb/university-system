@@ -12,21 +12,18 @@
 
 <body class="bg-light d-flex flex-column min-vh-100">
 
-<!-- HEADER -->
 <div th:replace="~{fragments/header :: header}"></div>
 
-<!-- MAIN CONTENT -->
 <main class="container py-5 flex-grow-1">
 
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h3 class="fw-bold mb-0">My Fees</h3>
         <span class="badge bg-info fs-6">
-            Outstanding: $
+            Outstanding: रु
             <span th:text="${outstanding}">0</span>
         </span>
     </div>
 
-    <!-- FEES TABLE CARD -->
     <div class="card shadow-sm border-0">
 
         <div class="card-body p-0">
@@ -54,8 +51,8 @@
                         </span>
                     </td>
 
-                    <td th:text="'$' + ${fee.amount}">
-                        $0
+                    <td th:text="'रु' + ${fee.amount}">
+                        रु0
                     </td>
 
                     <td>
