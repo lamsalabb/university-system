@@ -30,7 +30,7 @@ public class StudentGradesPageController {
 
         model.addAttribute(
                 "enrollments",
-                enrollmentService.getEnrollmentByStudent(student.getId())
+                enrollmentService.getEnrollmentsByStudent(student.getId())
         );
 
         return "student/grades";

@@ -25,29 +25,36 @@ public class AttendanceService {
     }
 
     @Transactional
-    public Attendance markAttendance(int enrollmentId, LocalDate sessionDate, Attendance.Status status, String remarks){
+    public Attendance markAttendance(int enrollmentId,
+                                     LocalDate sessionDate,
+                                     Attendance.Status status,
+                                     String remarks) {
 
-        Enrollment enrollment = enrollmentRepository .findById(enrollmentId).orElseThrow(
-                () -> new EnrollmentNotFoundException("Enrollment not found with id: " + enrollmentId)
-        );
+        Enrollment enrollment = enrollmentRepository.findById(enrollmentId)
+                .orElseThrow(() ->
+                        new EnrollmentNotFoundException(
+                                "Enrollment not found with id: " + enrollmentId)
+                );
 
-        return attendanceRepository.findByEnrollmentIdAndSessionDate(enrollmentId,sessionDate).map(
-                existing -> {
+        return attendanceRepository
+                .findByEnrollmentIdAndSessionDate(enrollmentId, sessionDate)
+                .map(existing -> {
+                    // UPDATE existing record
                     existing.setStatus(status);
-                    existing.setRemarks(remarks);//update a previously inserted attendance
+                    existing.setRemarks(remarks);
                     return attendanceRepository.save(existing);
-                }
-        ).orElseGet(
-                () -> {
+                })
+                .orElseGet(() -> {
+                    // CREATE new record
                     Attendance attendance = new Attendance();
                     attendance.setEnrollment(enrollment);
-                    attendance.setSessionDate(LocalDate.now());
+                    attendance.setSessionDate(sessionDate); // ✅ FIXED
                     attendance.setStatus(status);
                     attendance.setRemarks(remarks);
                     return attendanceRepository.save(attendance);
-                }
-        );
+                });
     }
+
 
     //student can view all their attendance records
     public List<Attendance> getAttendanceByStudent(int studentId){

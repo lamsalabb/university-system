@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Admin | Course Management</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+          rel="stylesheet">
+</head>
+
+<body class="bg-light d-flex flex-column min-vh-100">
+
+<div th:replace="~{fragments/header :: header}"></div>
+
+<main class="flex-grow-1 container py-5">
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h3 class="fw-bold mb-0">Course Management</h3>
+        <span class="text-muted">Create, edit & manage courses</span>
+    </div>
+
+    <div class="card shadow-sm border-0 mb-4">
+        <div class="card-body">
+
+            <h5 class="fw-semibold mb-3">Create New Course</h5>
+
+            <form th:action="@{/admin/courses}"
+                  th:object="${newCourse}"
+                  method="post"
+                  class="row g-3">
+
+                <div class="col-md-3">
+                    <input th:field="*{code}"
+                           class="form-control"
+                           placeholder="Course Code"
+                           required>
+                </div>
+
+                <div class="col-md-5">
+                    <input th:field="*{title}"
+                           class="form-control"
+                           placeholder="Course Title"
+                           required>
+                </div>
+
+                <div class="col-md-2">
+                    <input th:field="*{credits}"
+                           type="number"
+                           min="1"
+                           class="form-control"
+                           placeholder="Credits"
+                           required>
+                </div>
+
+                <div class="col-md-4">
+                    <select name="instructorId"
+                            class="form-select"
+                            required>
+                        <option value="">Assign Instructor</option>
+                        <option th:each="i : ${instructors}"
+                                th:value="${i.id}"
+                                th:text="${i.firstName + ' ' + i.lastName}">
+                        </option>
+                    </select>
+                </div>
+
+                <div class="col-md-3">
+                    <button class="btn btn-primary w-100">
+                        Create Course
+                    </button>
+                </div>
+
+            </form>
+
+        </div>
+    </div>
+
+    <div class="card shadow-sm border-0">
+        <div class="card-body">
+
+            <table class="table table-hover align-middle">
+
+                <thead class="table-light">
+                <tr>
+                    <th>Code</th>
+                    <th>Title</th>
+                    <th>Credits</th>
+                    <th>Instructor</th>
+                    <th style="width: 180px;">Actions</th>
+                </tr>
+                </thead>
+
+                <tbody>
+                <tr th:each="c : ${courses}">
+                    <td th:text="${c.code}"></td>
+                    <td th:text="${c.title}"></td>
+                    <td th:text="${c.credits}"></td>
+                    <td th:text="${c.instructor != null ? c.instructor.firstName + ' ' + c.instructor.lastName : '—'}"></td>
+
+                    <td class="d-flex gap-2">
+                        <button class="btn btn-sm btn-outline-primary"
+                                data-bs-toggle="modal"
+                                th:data-bs-target="'#editModal' + ${c.id}">
+                            Edit
+                        </button>
+
+                        <form th:action="@{/admin/courses/delete}"
+                              method="post"
+                              onsubmit="return confirm('Delete this course?');">
+                            <input type="hidden" name="courseId" th:value="${c.id}">
+                            <button class="btn btn-sm btn-outline-danger">
+                                Delete
+                            </button>
+                        </form>
+                    </td>
+                </tr>
+                </tbody>
+
+            </table>
+
+        </div>
+    </div>
+
+</main>
+
+<div th:each="c : ${courses}"
+     th:id="'editModal' + ${c.id}"
+     class="modal fade"
+     tabindex="-1">
+
+    <div class="modal-dialog">
+        <div class="modal-content">
+
+            <form th:action="@{/admin/courses/update}" method="post">
+
+                <div class="modal-header">
+                    <h5 class="modal-title">Edit Course</h5>
+                    <button class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+
+                <div class="modal-body">
+
+                    <input type="hidden" name="id" th:value="${c.id}">
+
+                    <div class="mb-2">
+                        <input name="code"
+                               th:value="${c.code}"
+                               class="form-control"
+                               required>
+                    </div>
+
+                    <div class="mb-2">
+                        <input name="title"
+                               th:value="${c.title}"
+                               class="form-control"
+                               required>
+                    </div>
+
+                    <div class="mb-2">
+                        <input name="credits"
+                               type="number"
+                               min="1"
+                               th:value="${c.credits}"
+                               class="form-control"
+                               required>
+                    </div>
+
+                    <div class="mb-2">
+                        <select name="instructorId"
+                                class="form-select"
+                                required>
+                            <option value="">Assign Instructor</option>
+                            <option th:each="i : ${instructors}"
+                                    th:value="${i.id}"
+                                    th:selected="${c.instructor != null && c.instructor.id == i.id}"
+                                    th:text="${i.firstName + ' ' + i.lastName}">
+                            </option>
+                        </select>
+                    </div>
+
+                </div>
+
+                <div class="modal-footer">
+                    <button class="btn btn-secondary"
+                            data-bs-dismiss="modal">
+                        Cancel
+                    </button>
+                    <button class="btn btn-primary">
+                        Save Changes
+                    </button>
+                </div>
+
+            </form>
+
+        </div>
+    </div>
+</div>
+
+<div th:replace="~{fragments/footer :: footer}"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+</body>
+</html>

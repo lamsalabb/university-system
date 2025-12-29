@@ -33,7 +33,7 @@ public class StudentEnrollmentPageController {
         int studentId = ((User) auth.getPrincipal()).getId();
 
         model.addAttribute("enrollments",
-                enrollmentService.getEnrollmentByStudent(studentId));
+                enrollmentService.getEnrollmentsByStudent(studentId));
 
         int outstanding = feeService.calculateOutstandingFee(studentId);
         model.addAttribute("outstanding", outstanding);

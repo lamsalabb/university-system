@@ -88,4 +88,21 @@ public class FeeService {
         return outstanding > thresholdAmount;
     }
 
+    @Transactional
+    public void toggleFeeStatus(int feeId) {
+        Fee fee = feeRepository.findById(feeId)
+                .orElseThrow(() -> new RuntimeException("Fee not found"));
+        fee.setPaid(!fee.isPaid());
+        feeRepository.save(fee);
+    }
+
+    @Transactional
+    public Fee save(Fee fee) {
+        return feeRepository.save(fee);
+    }
+
+    public List<Fee> getAllFees() {
+        return feeRepository.findAll();
+    }
+
 }

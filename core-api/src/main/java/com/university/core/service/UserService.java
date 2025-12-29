@@ -4,7 +4,6 @@ import com.university.common.entity.User;
 import com.university.common.repository.UserRepository;
 import com.university.core.exception.EmailAlreadyExistsException;
 import com.university.core.exception.EmailNotFoundException;
-import com.university.core.exception.UserAlreadyExistsException;
 import com.university.core.exception.UserNotFoundException;
 import jakarta.transaction.Transactional;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -71,29 +70,40 @@ public class UserService {
 
 
 
-    @Transactional//UPDATE
+    @Transactional // UPDATE
     public User updateUser(int id, User updatedUserDetails){
 
         User existingUser = findUserById(id);
 
         existingUser.setFirstName(updatedUserDetails.getFirstName());
         existingUser.setLastName(updatedUserDetails.getLastName());
+        existingUser.setRole(updatedUserDetails.getRole());
+        existingUser.setIsActive(updatedUserDetails.getIsActive());
 
-        if (!existingUser.getEmail().equals(updatedUserDetails.getEmail())){
+        // Email uniqueness check
+        if (!existingUser.getEmail().equals(updatedUserDetails.getEmail())) {
             userRepository.findByEmail(updatedUserDetails.getEmail()).ifPresent(
-                    (userWithSameEmail) -> {
-                        throw new EmailAlreadyExistsException("Email already exists. Please enter unique email.");
+                    userWithSameEmail -> {
+                        throw new EmailAlreadyExistsException(
+                                "Email already exists. Please enter unique email."
+                        );
                     }
-            );//check for unique email before updating
+            );
             existingUser.setEmail(updatedUserDetails.getEmail());
-
         }
 
+        // ✅ ONLY update password if provided
+        if (updatedUserDetails.getPasswordHash() != null &&
+                !updatedUserDetails.getPasswordHash().isBlank()) {
 
-        existingUser.setPasswordHash(passwordEncoder.encode(updatedUserDetails.getPasswordHash()));//separate password change logic later
+            existingUser.setPasswordHash(
+                    passwordEncoder.encode(updatedUserDetails.getPasswordHash())
+            );
+        }
 
         return userRepository.save(existingUser);
     }
+
 
 
 
@@ -105,6 +115,21 @@ public class UserService {
         }
         userRepository.deleteById(id);
     }
+
+    @Transactional
+    public void toggleActive(Integer userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        user.setIsActive(!user.getIsActive());
+    }
+
+    public List<User> getUsersByRole(User.Role role) {
+        return userRepository.findByRole(role);
+    }
+
+
+
 
 
 }

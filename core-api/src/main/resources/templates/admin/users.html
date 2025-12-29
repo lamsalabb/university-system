@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org">
+
+<head>
+  <meta charset="UTF-8">
+  <title>Admin | User Management</title>
+
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+        rel="stylesheet">
+</head>
+
+<body class="bg-light d-flex flex-column min-vh-100">
+
+<div th:replace="~{fragments/header :: header}"></div>
+
+<main class="flex-grow-1 container py-5">
+
+  <!-- PAGE HEADER -->
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h3 class="fw-bold mb-0">User Management</h3>
+    <span class="text-muted">Create, edit & manage users</span>
+  </div>
+
+  <!-- =========================
+       CREATE USER
+       ========================= -->
+  <div class="card shadow-sm border-0 mb-4">
+    <div class="card-body">
+
+      <h5 class="fw-semibold mb-4">Create New User</h5>
+
+      <form th:action="@{/admin/users}"
+            th:object="${newUser}"
+            method="post">
+
+        <div class="row g-3">
+
+          <div class="col-md-4">
+            <input th:field="*{firstName}"
+                   class="form-control"
+                   placeholder="First Name"
+                   required>
+          </div>
+
+          <div class="col-md-4">
+            <input th:field="*{lastName}"
+                   class="form-control"
+                   placeholder="Last Name"
+                   required>
+          </div>
+
+          <div class="col-md-4">
+            <input th:field="*{email}"
+                   type="email"
+                   class="form-control"
+                   placeholder="Email"
+                   required>
+          </div>
+
+          <div class="col-md-4">
+            <select th:field="*{role}"
+                    class="form-select"
+                    required>
+              <option value="">Select Role</option>
+              <option value="ADMIN">ADMIN</option>
+              <option value="INSTRUCTOR">INSTRUCTOR</option>
+              <option value="STUDENT">STUDENT</option>
+            </select>
+          </div>
+
+          <div class="col-md-4">
+            <input th:field="*{passwordHash}"
+                   type="password"
+                   class="form-control"
+                   placeholder="Temporary Password"
+                   required>
+          </div>
+
+          <div class="col-md-4 d-flex align-items-end">
+            <button class="btn btn-primary w-100">
+              Create User
+            </button>
+          </div>
+
+        </div>
+      </form>
+
+    </div>
+  </div>
+
+  <!-- =========================
+       USERS TABLE
+       ========================= -->
+  <div class="card shadow-sm border-0">
+    <div class="card-body">
+
+      <table class="table table-hover align-middle">
+
+        <thead class="table-light">
+        <tr>
+          <th>Name</th>
+          <th>Email</th>
+          <th>Role</th>
+          <th>Status</th>
+          <th style="width: 180px;">Actions</th>
+        </tr>
+        </thead>
+
+        <tbody>
+        <tr th:each="u : ${users}">
+
+          <td th:text="${u.firstName + ' ' + u.lastName}"></td>
+          <td th:text="${u.email}"></td>
+
+          <td>
+            <span class="badge bg-secondary"
+                  th:text="${u.role}"></span>
+          </td>
+
+          <td>
+            <span th:if="${u.isActive}" class="badge bg-success">
+              Active
+            </span>
+            <span th:if="${!u.isActive}" class="badge bg-danger">
+              Inactive
+            </span>
+          </td>
+
+          <td class="d-flex gap-2">
+
+            <!-- ✅ EDIT (NOT FOR ADMIN) -->
+            <button th:if="${u.role.name() != 'ADMIN'}"
+                    class="btn btn-sm btn-outline-primary"
+                    data-bs-toggle="modal"
+                    th:data-bs-target="'#editModal' + ${u.id}">
+              Edit
+            </button>
+
+            <!-- ✅ TOGGLE (NOT FOR ADMIN) -->
+            <form th:if="${u.role.name() != 'ADMIN'}"
+                  th:action="@{/admin/users/toggle}"
+                  method="post">
+              <input type="hidden" name="userId" th:value="${u.id}">
+              <button class="btn btn-sm btn-outline-warning">
+                Toggle
+              </button>
+            </form>
+
+            <!-- ADMIN LOCKED LABEL -->
+            <span th:if="${u.role.name() == 'ADMIN'}"
+                  class="text-muted small fst-italic">
+              Protected
+            </span>
+
+          </td>
+        </tr>
+        </tbody>
+
+      </table>
+    </div>
+  </div>
+
+</main>
+
+<!-- =========================
+     EDIT MODALS (NON-ADMIN ONLY)
+     ========================= -->
+<div th:each="u : ${users}"
+     th:if="${u.role.name() != 'ADMIN'}"
+     th:id="'editModal' + ${u.id}"
+     class="modal fade"
+     tabindex="-1">
+
+  <div class="modal-dialog">
+    <div class="modal-content">
+
+      <form th:action="@{/admin/users/update}"
+            method="post">
+
+        <div class="modal-header">
+          <h5 class="modal-title">Edit User</h5>
+          <button class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+
+        <div class="modal-body">
+
+          <input type="hidden" name="id" th:value="${u.id}">
+
+          <div class="mb-2">
+            <input name="firstName"
+                   th:value="${u.firstName}"
+                   class="form-control"
+                   placeholder="First Name">
+          </div>
+
+          <div class="mb-2">
+            <input name="lastName"
+                   th:value="${u.lastName}"
+                   class="form-control"
+                   placeholder="Last Name">
+          </div>
+
+          <div class="mb-2">
+            <input name="email"
+                   th:value="${u.email}"
+                   class="form-control"
+                   placeholder="Email">
+          </div>
+
+          <div class="mb-2">
+            <select name="role"
+                    class="form-select">
+              <option th:selected="${u.role.name() == 'ADMIN'}">ADMIN</option>
+              <option th:selected="${u.role.name() == 'INSTRUCTOR'}">INSTRUCTOR</option>
+              <option th:selected="${u.role.name() == 'STUDENT'}">STUDENT</option>
+            </select>
+          </div>
+
+          <div class="form-check">
+            <input type="checkbox"
+                   class="form-check-input"
+                   name="isActive"
+                   th:checked="${u.isActive}">
+            <label class="form-check-label">
+              Active
+            </label>
+          </div>
+
+        </div>
+
+        <div class="modal-footer">
+          <button class="btn btn-secondary" data-bs-dismiss="modal">
+            Cancel
+          </button>
+          <button class="btn btn-primary">
+            Save Changes
+          </button>
+        </div>
+
+      </form>
+
+    </div>
+  </div>
+</div>
+
+<div th:replace="~{fragments/footer :: footer}"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+</body>
+</html>

@@ -5,6 +5,9 @@
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
           rel="stylesheet">
+
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 
 <body class="bg-light d-flex flex-column min-vh-100">
@@ -16,19 +19,17 @@
 
     <!-- PAGE HEADER -->
     <div class="d-flex justify-content-between align-items-center mb-4">
-        <h3 class="fw-bold mb-0">Attendance Records</h3>
+        <h3 class="fw-bold mb-0">Attendance Overview</h3>
 
         <!-- CONTROLS -->
         <div class="d-flex gap-2">
 
-            <!-- COURSE FILTER -->
             <select id="courseFilter"
                     class="form-select form-select-sm"
                     style="width: 220px;">
                 <option value="">All Courses</option>
             </select>
 
-            <!-- SORT DROPDOWN -->
             <select id="sortSelect"
                     class="form-select form-select-sm"
                     style="width: 220px;">
@@ -39,6 +40,43 @@
             </select>
 
         </div>
+    </div>
+
+    <!-- CHART + KPI -->
+    <div class="row g-4 mb-5">
+
+        <!-- STATUS PIE -->
+        <div class="col-lg-6">
+            <div class="card shadow-sm border-0 h-100">
+                <div class="card-body">
+                    <h6 class="fw-semibold mb-3">Attendance Status</h6>
+                    <canvas id="statusChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- TOTAL SESSIONS KPI -->
+        <div class="col-lg-6">
+            <div class="card shadow-sm border-0 h-100 bg-warning-subtle">
+                <div class="card-body d-flex flex-column justify-content-center text-center">
+
+                    <div class="text-uppercase text-muted fw-semibold mb-2">
+                        Total Sessions
+                    </div>
+
+                    <div id="totalSessions"
+                         class="fw-bold display-1 text-warning">
+                        0
+                    </div>
+
+                    <div class="text-muted mt-2">
+                        Based on current filters
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
     </div>
 
     <!-- TABLE -->
@@ -60,32 +98,23 @@
 
                     <tbody>
                     <tr th:each="a : ${attendanceList}"
-                        th:data-course="${a.enrollment.course.title}">
+                        th:data-course="${a.enrollment.course.title}"
+                        th:data-status="${a.status.name()}">
 
-                        <td th:text="${a.enrollment.course.title}">
-                            Course
-                        </td>
+                        <td th:text="${a.enrollment.course.title}">Course</td>
 
-                        <!-- DATE (for sorting) -->
                         <td th:text="${a.sessionDate}"
                             th:data-date="${a.sessionDate}">
                             2025-01-01
                         </td>
 
-                        <!-- STATUS (for sorting) -->
-                        <td th:data-status="${a.status.name()}">
+                        <td>
                             <span class="badge bg-success"
-                                  th:if="${a.status.name() == 'PRESENT'}">
-                                Present
-                            </span>
+                                  th:if="${a.status.name() == 'PRESENT'}">Present</span>
                             <span class="badge bg-danger"
-                                  th:if="${a.status.name() == 'ABSENT'}">
-                                Absent
-                            </span>
+                                  th:if="${a.status.name() == 'ABSENT'}">Absent</span>
                             <span class="badge bg-warning text-dark"
-                                  th:if="${a.status.name() == 'EXCUSED'}">
-                                Excused
-                            </span>
+                                  th:if="${a.status.name() == 'EXCUSED'}">Excused</span>
                         </td>
 
                         <td th:text="${a.remarks ?: '—'}">—</td>
@@ -110,11 +139,13 @@
 <!-- FOOTER -->
 <div th:replace="~{fragments/footer :: footer}"></div>
 
-<!-- SORT + FILTER SCRIPT -->
+<!-- SCRIPT -->
 <script>
     const sortSelect = document.getElementById("sortSelect");
     const courseFilter = document.getElementById("courseFilter");
     const tableBody = document.querySelector("#attendanceTable tbody");
+    const totalSessionsEl = document.getElementById("totalSessions");
+
     const rows = Array.from(tableBody.querySelectorAll("tr"))
         .filter(r => r.dataset.course);
 
@@ -127,6 +158,9 @@
         courseFilter.appendChild(opt);
     });
 
+    const statusCtx = document.getElementById("statusChart");
+    let statusChart;
+
     function applyFiltersAndSort() {
         const selectedCourse = courseFilter.value;
         const mode = sortSelect.value;
@@ -136,35 +170,55 @@
         );
 
         visibleRows.sort((a, b) => {
-            if (mode === "dateDesc" || mode === "dateAsc") {
+            if (mode.startsWith("date")) {
                 const da = new Date(a.children[1].dataset.date);
                 const db = new Date(b.children[1].dataset.date);
                 return mode === "dateAsc" ? da - db : db - da;
             }
-
             if (mode === "courseAsc") {
-                return a.children[0].innerText
-                    .localeCompare(b.children[0].innerText);
+                return a.children[0].innerText.localeCompare(b.children[0].innerText);
             }
-
             if (mode === "statusAsc") {
-                return a.children[2].dataset.status
-                    .localeCompare(b.children[2].dataset.status);
+                return a.dataset.status.localeCompare(b.dataset.status);
             }
-
             return 0;
         });
 
-        /* Re-render */
         rows.forEach(r => r.style.display = "none");
         visibleRows.forEach(r => {
             r.style.display = "";
             tableBody.appendChild(r);
         });
+
+        updateCharts(visibleRows);
+    }
+
+    function updateCharts(activeRows) {
+        const statusCounts = { PRESENT: 0, ABSENT: 0, EXCUSED: 0 };
+
+        activeRows.forEach(r => {
+            statusCounts[r.dataset.status]++;
+        });
+
+        totalSessionsEl.textContent = activeRows.length;
+
+        statusChart?.destroy();
+        statusChart = new Chart(statusCtx, {
+            type: "pie",
+            data: {
+                labels: Object.keys(statusCounts),
+                datasets: [{
+                    data: Object.values(statusCounts),
+                    backgroundColor: ["#198754", "#dc3545", "#ffc107"]
+                }]
+            }
+        });
     }
 
     sortSelect.addEventListener("change", applyFiltersAndSort);
     courseFilter.addEventListener("change", applyFiltersAndSort);
+
+    updateCharts(rows);
 </script>
 
 </body>

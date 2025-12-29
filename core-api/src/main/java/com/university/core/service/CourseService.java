@@ -1,22 +1,25 @@
 package com.university.core.service;
 
 import com.university.common.entity.Course;
+import com.university.common.entity.User;
 import com.university.common.repository.CourseRepository;
+import com.university.common.repository.UserRepository;
 import com.university.core.exception.CourseAlreadyExistsException;
 import com.university.core.exception.CourseNotFoundException;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
-import java.security.PublicKey;
 import java.util.List;
 
 @Service
 public class CourseService {
 
     private final CourseRepository courseRepository;
+    private final UserRepository userRepository;
 
-    public CourseService(CourseRepository courseRepository) {
+    public CourseService(CourseRepository courseRepository, UserRepository userRepository) {
         this.courseRepository = courseRepository;
+        this.userRepository = userRepository;
     }
 
 
@@ -65,6 +68,27 @@ public class CourseService {
     }
 
 
+    public List<Course> getCoursesByInstructorId(int instructorId) {
+        return courseRepository.findByInstructorId(instructorId);
+    }
+    @Transactional
+    public void assignInstructor(int courseId, int instructorId) {
+
+        Course course = courseRepository.findById(courseId)
+                .orElseThrow(() ->
+                        new RuntimeException("Course not found with id: " + courseId));
+
+        User instructor = userRepository.findById(instructorId)
+                .orElseThrow(() ->
+                        new RuntimeException("Instructor not found with id: " + instructorId));
+
+        if (instructor.getRole() != User.Role.INSTRUCTOR) {
+            throw new RuntimeException("Selected user is not an instructor");
+        }
+
+        course.setInstructor(instructor);
+        courseRepository.save(course);
+    }
 
 
 

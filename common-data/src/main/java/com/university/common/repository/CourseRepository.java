@@ -13,4 +13,6 @@ public interface CourseRepository extends JpaRepository<Course, Integer> {
     List<Course> findByInstructor(User instructor);
 
     long countByInstructor(User instructor);
+
+    List<Course> findByInstructorId(int instructorId);
 }

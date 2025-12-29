@@ -12,36 +12,36 @@ import java.util.Map;
 @RestController
 @RequestMapping("/api/enrollments")
 public class EnrollmentController {
+
     private final EnrollmentService enrollmentService;
 
     public EnrollmentController(EnrollmentService enrollmentService) {
         this.enrollmentService = enrollmentService;
     }
 
-    @PostMapping("/enroll")
-    public ResponseEntity<?> enroll(@RequestBody Enrollment enrollmentRequest){
-        Enrollment newEnrollment = enrollmentService.enroll(enrollmentRequest);
-        return new ResponseEntity<>(newEnrollment, HttpStatus.CREATED);
-
+    @PostMapping
+    public ResponseEntity<?> enroll(@RequestBody Enrollment enrollment) {
+        return new ResponseEntity<>(
+                enrollmentService.enroll(enrollment),
+                HttpStatus.CREATED
+        );
     }
 
     @PostMapping("/{id}/drop")
-    public ResponseEntity<?> drop(@PathVariable int id){
+    public ResponseEntity<?> drop(@PathVariable int id) {
         enrollmentService.dropEnrollment(id);
-        return new ResponseEntity<>(
-                Map.of("message", "Enrollment dropped successfully."),
-                HttpStatus.OK
+        return ResponseEntity.ok(
+                Map.of("message", "Enrollment dropped successfully")
         );
     }
 
     @GetMapping("/student/{studentId}")
-    public List<Enrollment> byStudent(@PathVariable int studentId){
-        return enrollmentService.getEnrollmentByStudent(studentId);
+    public List<Enrollment> byStudent(@PathVariable int studentId) {
+        return enrollmentService.getEnrollmentsByStudent(studentId);
     }
 
     @GetMapping("/course/{courseId}")
-    public List<Enrollment> byCourse(@PathVariable int courseId){
-        return enrollmentService.getEnrollmentByCourse(courseId);
+    public List<Enrollment> byCourse(@PathVariable int courseId) {
+        return enrollmentService.getEnrollmentsByCourse(courseId);
     }
-
 }

@@ -8,16 +8,17 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.List;
 import java.util.Optional;
 
-public interface EnrollmentRepository extends JpaRepository<Enrollment,Integer> {
+public interface EnrollmentRepository extends JpaRepository<Enrollment, Integer> {
 
     List<Enrollment> findByStudentId(int studentId);
 
     List<Enrollment> findByCourseId(int courseId);
 
-    Optional<Enrollment> findByStudentAndCourseAndSemester(User student, Course course, String semester);//using the unique constraint search
+    Optional<Enrollment> findByStudentAndCourseAndSemester(
+            User student,
+            Course course,
+            String semester
+    );
 
-    List<Enrollment> findByCourse_Instructor_Id(int instructorId);
     List<Enrollment> findByCourseInstructorId(int instructorId);
-
-
 }
