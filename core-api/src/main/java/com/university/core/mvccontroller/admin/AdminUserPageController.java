@@ -29,18 +29,14 @@ public class AdminUserPageController {
         return "admin/users";
     }
 
-    /* ============================
-       CREATE USER
-       ============================ */
+
     @PostMapping
     public String createUser(@ModelAttribute("newUser") User user) {
         userService.registerNewUser(user);
         return "redirect:/admin/users";
     }
 
-    /* ============================
-       UPDATE USER
-       ============================ */
+
     @PostMapping("/update")
     public String updateUser(@ModelAttribute User user) {
 
@@ -48,9 +44,7 @@ public class AdminUserPageController {
         return "redirect:/admin/users";
     }
 
-    /* ============================
-       TOGGLE ACTIVE
-       ============================ */
+
     @PostMapping("/toggle")
     public String toggleUser(@RequestParam Integer userId) {
 

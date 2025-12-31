@@ -39,13 +39,11 @@ public class AttendanceService {
         return attendanceRepository
                 .findByEnrollmentIdAndSessionDate(enrollmentId, sessionDate)
                 .map(existing -> {
-                    // UPDATE existing record
                     existing.setStatus(status);
                     existing.setRemarks(remarks);
                     return attendanceRepository.save(existing);
                 })
                 .orElseGet(() -> {
-                    // CREATE new record
                     Attendance attendance = new Attendance();
                     attendance.setEnrollment(enrollment);
                     attendance.setSessionDate(sessionDate); // ✅ FIXED
@@ -56,12 +54,10 @@ public class AttendanceService {
     }
 
 
-    //student can view all their attendance records
     public List<Attendance> getAttendanceByStudent(int studentId){
         return attendanceRepository.findByEnrollmentStudentId(studentId);
     }
 
-    //student can view their attendance records for specific course
     public List<Attendance> getAttendanceByStudentAndCourse(int studentId, int courseId){
         return attendanceRepository.findByEnrollmentStudentIdAndEnrollmentCourseId(studentId,courseId);
     }

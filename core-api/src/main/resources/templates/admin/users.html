@@ -22,9 +22,7 @@
     <span class="text-muted">Create, edit & manage users</span>
   </div>
 
-  <!-- =========================
-       CREATE USER
-       ========================= -->
+
   <div class="card shadow-sm border-0 mb-4">
     <div class="card-body">
 
@@ -89,9 +87,7 @@
     </div>
   </div>
 
-  <!-- =========================
-       USERS TABLE
-       ========================= -->
+
   <div class="card shadow-sm border-0">
     <div class="card-body">
 
@@ -129,7 +125,6 @@
 
           <td class="d-flex gap-2">
 
-            <!-- ✅ EDIT (NOT FOR ADMIN) -->
             <button th:if="${u.role.name() != 'ADMIN'}"
                     class="btn btn-sm btn-outline-primary"
                     data-bs-toggle="modal"
@@ -137,7 +132,7 @@
               Edit
             </button>
 
-            <!-- ✅ TOGGLE (NOT FOR ADMIN) -->
+
             <form th:if="${u.role.name() != 'ADMIN'}"
                   th:action="@{/admin/users/toggle}"
                   method="post">
@@ -147,10 +142,9 @@
               </button>
             </form>
 
-            <!-- ADMIN LOCKED LABEL -->
             <span th:if="${u.role.name() == 'ADMIN'}"
                   class="text-muted small fst-italic">
-              Protected
+              Admin
             </span>
 
           </td>
@@ -163,9 +157,6 @@
 
 </main>
 
-<!-- =========================
-     EDIT MODALS (NON-ADMIN ONLY)
-     ========================= -->
 <div th:each="u : ${users}"
      th:if="${u.role.name() != 'ADMIN'}"
      th:id="'editModal' + ${u.id}"

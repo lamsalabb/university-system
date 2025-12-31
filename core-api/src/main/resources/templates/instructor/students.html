@@ -9,25 +9,21 @@
 
 <body class="bg-light d-flex flex-column min-vh-100">
 
-<!-- HEADER -->
 <div th:replace="~{fragments/header :: header}"></div>
 
 <main class="container py-5 flex-grow-1">
 
-  <!-- PAGE HEADER + FILTERS -->
   <div class="d-flex flex-wrap justify-content-between align-items-center mb-4 gap-3">
     <h3 class="fw-bold mb-0">Enrolled Students</h3>
 
     <div class="d-flex gap-2">
 
-      <!-- COURSE FILTER -->
       <select id="courseFilter"
               class="form-select form-select-sm"
               style="width: 220px;">
         <option value="">All Courses</option>
       </select>
 
-      <!-- SEMESTER FILTER -->
       <select id="semesterFilter"
               class="form-select form-select-sm"
               style="width: 200px;">
@@ -37,7 +33,6 @@
     </div>
   </div>
 
-  <!-- TABLE -->
   <div class="card shadow-sm border-0">
     <div class="card-body p-0">
 
@@ -93,10 +88,8 @@
 
 </main>
 
-<!-- FOOTER -->
 <div th:replace="~{fragments/footer :: footer}"></div>
 
-<!-- FILTER SCRIPT -->
 <script>
   const courseFilter = document.getElementById("courseFilter");
   const semesterFilter = document.getElementById("semesterFilter");
@@ -105,7 +98,6 @@
           document.querySelectorAll("#studentsTable tbody tr")
   ).filter(r => r.dataset.course);
 
-  /* Populate filters */
   const courses = [...new Set(rows.map(r => r.dataset.course))].sort();
   const semesters = [...new Set(rows.map(r => r.dataset.semester))].sort();
 
@@ -123,7 +115,6 @@
     semesterFilter.appendChild(opt);
   });
 
-  /* Apply filters */
   function applyFilters() {
     const selectedCourse = courseFilter.value;
     const selectedSemester = semesterFilter.value;

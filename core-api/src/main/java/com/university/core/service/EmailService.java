@@ -13,7 +13,6 @@ public class EmailService {
 
     private final JavaMailSender mailSender;
 
-    // email -> otp
     private final Map<String, String> otpCache = new ConcurrentHashMap<>();
 
     public EmailService(JavaMailSender mailSender) {
@@ -35,7 +34,7 @@ public class EmailService {
     public boolean validateOTP(String email, String otp) {
         String cached = otpCache.get(email);
         if (cached != null && cached.equals(otp)) {
-            otpCache.remove(email); // one-time use
+            otpCache.remove(email);
             return true;
         }
         return false;

@@ -28,10 +28,8 @@ public class InstructorCoursesController {
     @GetMapping("/courses")
     public String myCourses(Authentication authentication, Model model) {
 
-        // ✅ Spring Security user (NOT entity)
         String email = authentication.getName();
 
-        // ✅ Load your actual User entity
         User instructor = userService.findUserByEmail(email);
 
         List<Course> courses =

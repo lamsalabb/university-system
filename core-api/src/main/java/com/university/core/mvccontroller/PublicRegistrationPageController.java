@@ -33,9 +33,7 @@ public class PublicRegistrationPageController {
                                  @RequestParam(required = false) String otp,
                                  Model model) {
 
-        // ───────────────
-        // PHASE 2: OTP submitted
-        // ───────────────
+
         if (otp != null && !otp.isBlank()) {
 
             boolean valid = emailService.validateOTP(user.getEmail(), otp);
@@ -46,16 +44,12 @@ public class PublicRegistrationPageController {
                 return "auth/register";
             }
 
-            // OTP correct → NOW save user
             user.setRole(User.Role.STUDENT);
             userService.registerNewUser(user);
 
             return "redirect:/login?registered=true";
         }
 
-        // ───────────────
-        // PHASE 1: Send OTP
-        // ───────────────
         emailService.generateAndSendOTP(user.getEmail());
         model.addAttribute("otpSent", true);
 

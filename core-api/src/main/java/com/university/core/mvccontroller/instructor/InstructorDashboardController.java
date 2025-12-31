@@ -20,11 +20,9 @@ public class InstructorDashboardController {
     @GetMapping("/instructor/dashboard")
     public String instructorDashboard(Authentication authentication, Model model) {
 
-        // ✅ Get logged-in instructor
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
         User instructor = userService.findUserByEmail(userDetails.getUsername());
 
-        // ✅ IMPORTANT: add instructor to model
         model.addAttribute("instructor", instructor);
 
         return "instructor/dashboard";

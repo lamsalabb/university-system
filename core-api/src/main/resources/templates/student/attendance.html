@@ -6,22 +6,18 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
           rel="stylesheet">
 
-    <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 
 <body class="bg-light d-flex flex-column min-vh-100">
 
-<!-- HEADER -->
 <div th:replace="~{fragments/header :: header}"></div>
 
 <main class="container py-5 flex-grow-1">
 
-    <!-- PAGE HEADER -->
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h3 class="fw-bold mb-0">Attendance Overview</h3>
 
-        <!-- CONTROLS -->
         <div class="d-flex gap-2">
 
             <select id="courseFilter"
@@ -42,10 +38,8 @@
         </div>
     </div>
 
-    <!-- CHART + KPI -->
     <div class="row g-4 mb-5">
 
-        <!-- STATUS PIE -->
         <div class="col-lg-6">
             <div class="card shadow-sm border-0 h-100">
                 <div class="card-body">
@@ -55,7 +49,6 @@
             </div>
         </div>
 
-        <!-- TOTAL SESSIONS KPI -->
         <div class="col-lg-6">
             <div class="card shadow-sm border-0 h-100 bg-warning-subtle">
                 <div class="card-body d-flex flex-column justify-content-center text-center">
@@ -79,7 +72,6 @@
 
     </div>
 
-    <!-- TABLE -->
     <div class="card shadow-sm border-0">
         <div class="card-body p-0">
 
@@ -136,10 +128,8 @@
 
 </main>
 
-<!-- FOOTER -->
 <div th:replace="~{fragments/footer :: footer}"></div>
 
-<!-- SCRIPT -->
 <script>
     const sortSelect = document.getElementById("sortSelect");
     const courseFilter = document.getElementById("courseFilter");
@@ -149,7 +139,6 @@
     const rows = Array.from(tableBody.querySelectorAll("tr"))
         .filter(r => r.dataset.course);
 
-    /* Populate course filter */
     const courses = [...new Set(rows.map(r => r.dataset.course))].sort();
     courses.forEach(course => {
         const opt = document.createElement("option");

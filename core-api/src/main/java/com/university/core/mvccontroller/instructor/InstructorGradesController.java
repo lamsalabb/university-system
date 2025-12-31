@@ -25,35 +25,26 @@ public class InstructorGradesController {
         this.userService = userService;
     }
 
-    /**
-     * View grades page
-     */
+
     @GetMapping("/grades")
     public String viewGrades(Authentication authentication, Model model) {
 
-        // ✅ Get logged-in username (email)
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
         String email = userDetails.getUsername();
 
-        // ✅ Load instructor entity safely
         User instructor = userService.findUserByEmail(email);
 
-        // ✅ Get enrollments for courses taught by this instructor
         List<Enrollment> enrollments =
                 enrollmentService.getEnrollmentsByInstructor(instructor.getId());
 
         model.addAttribute("enrollments", enrollments);
 
-        // ✅ REQUIRED for Thymeleaf (no #arrays.asList)
         model.addAttribute("grades",
                 List.of("A", "A-", "B+", "B", "B-", "C+", "C", "D", "F"));
 
         return "instructor/grades";
     }
 
-    /**
-     * Update grade inline
-     */
     @PostMapping("/grades/update")
     public String updateGrade(@RequestParam int enrollmentId,
                               @RequestParam(required = false) String grade) {

@@ -2,9 +2,9 @@ package com.university.reporting.contract.dto;
 
 public class CourseEnrollmentDTO {
 
-    private Integer courseId;
-    private String courseCode;
-    private Long enrollmentCount;
+    private final Integer courseId;
+    private final String courseCode;
+    private final Long enrollmentCount;
 
     public CourseEnrollmentDTO(Integer courseId, String courseCode, Long enrollmentCount) {
         this.courseId = courseId;

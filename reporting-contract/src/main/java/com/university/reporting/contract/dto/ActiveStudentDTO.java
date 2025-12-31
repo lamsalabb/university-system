@@ -2,10 +2,10 @@ package com.university.reporting.contract.dto;
 
 public class ActiveStudentDTO {
 
-    private Integer studentId;
-    private String email;
-    private String firstName;
-    private String lastName;
+    private final Integer studentId;
+    private final String email;
+    private final String firstName;
+    private final String lastName;
 
     public ActiveStudentDTO(
             Integer studentId,

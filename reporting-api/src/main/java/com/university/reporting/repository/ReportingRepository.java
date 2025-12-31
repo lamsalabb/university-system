@@ -11,7 +11,6 @@ import java.util.List;
 
 public interface ReportingRepository extends JpaRepository<Enrollment, Integer> {
 
-    //Active students
     @Query("""
         SELECT new com.university.reporting.contract.dto.ActiveStudentDTO(
             u.id, u.email, u.firstName, u.lastName
@@ -21,7 +20,6 @@ public interface ReportingRepository extends JpaRepository<Enrollment, Integer> 
     """)
     List<ActiveStudentDTO> findActiveStudents();
 
-    //Courses with enrollment count
     @Query("""
         SELECT new com.university.reporting.contract.dto.CourseEnrollmentDTO(
             c.id, c.code, COUNT(e.id)
@@ -31,7 +29,6 @@ public interface ReportingRepository extends JpaRepository<Enrollment, Integer> 
     """)
     List<CourseEnrollmentDTO> enrollmentByCourse();
 
-    //Average grade per course
     @Query("""
     SELECT new com.university.reporting.contract.dto.AverageGradeDTO(
         c.id,

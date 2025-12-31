@@ -2,9 +2,9 @@ package com.university.reporting.contract.dto;
 
 public class AverageGradeDTO {
 
-    private Integer courseId;
-    private String courseCode;
-    private Double averageGrade;
+    private final Integer courseId;
+    private final String courseCode;
+    private final Double averageGrade;
 
     public AverageGradeDTO(
             Integer courseId,

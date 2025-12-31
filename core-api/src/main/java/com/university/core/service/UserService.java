@@ -92,7 +92,6 @@ public class UserService {
             existingUser.setEmail(updatedUserDetails.getEmail());
         }
 
-        // ✅ ONLY update password if provided
         if (updatedUserDetails.getPasswordHash() != null &&
                 !updatedUserDetails.getPasswordHash().isBlank()) {
 

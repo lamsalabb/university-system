@@ -12,13 +12,10 @@
 
 <body class="bg-light d-flex flex-column min-vh-100">
 
-<!-- HEADER -->
 <div th:replace="~{fragments/header :: header}"></div>
 
-<!-- MAIN CONTENT -->
 <main class="flex-grow-1 container py-5">
 
-  <!-- HEADER + FILTERS -->
   <div class="d-flex flex-wrap justify-content-between align-items-center mb-4 gap-3">
     <div>
       <h3 class="fw-bold mb-0">Student Grades</h3>
@@ -27,14 +24,12 @@
 
     <div class="d-flex gap-2">
 
-      <!-- COURSE FILTER -->
       <select id="courseFilter"
               class="form-select form-select-sm"
               style="width: 220px;">
         <option value="">All Courses</option>
       </select>
 
-      <!-- SEMESTER FILTER -->
       <select id="semesterFilter"
               class="form-select form-select-sm"
               style="width: 200px;">
@@ -67,22 +62,18 @@
               th:data-course="${enrollment.course.code + ' - ' + enrollment.course.title}"
               th:data-semester="${enrollment.semester}">
 
-            <!-- Student -->
             <td th:text="${enrollment.student.firstName + ' ' + enrollment.student.lastName}">
               Student Name
             </td>
 
-            <!-- Course -->
             <td th:text="${enrollment.course.code + ' - ' + enrollment.course.title}">
               Course
             </td>
 
-            <!-- Semester -->
             <td th:text="${enrollment.semester}">
               Semester
             </td>
 
-            <!-- Status -->
             <td>
                             <span class="badge"
                                   th:classappend="${enrollment.status.name() == 'COMPLETED'} ? 'bg-success'
@@ -92,7 +83,6 @@
                             </span>
             </td>
 
-            <!-- Grade + Save -->
             <td colspan="2">
               <form th:action="@{/instructor/grades/update}"
                     method="post"
@@ -140,10 +130,8 @@
 
 </main>
 
-<!-- FOOTER -->
 <div th:replace="~{fragments/footer :: footer}"></div>
 
-<!-- FILTER SCRIPT -->
 <script>
   const courseFilter = document.getElementById("courseFilter");
   const semesterFilter = document.getElementById("semesterFilter");
@@ -152,7 +140,6 @@
           document.querySelectorAll("#gradesTable tbody tr")
   ).filter(r => r.dataset.course);
 
-  /* Populate filters */
   const courses = [...new Set(rows.map(r => r.dataset.course))].sort();
   const semesters = [...new Set(rows.map(r => r.dataset.semester))].sort();
 
@@ -170,7 +157,6 @@
     semesterFilter.appendChild(opt);
   });
 
-  /* Apply filters */
   function applyFilters() {
     const selectedCourse = courseFilter.value;
     const selectedSemester = semesterFilter.value;
